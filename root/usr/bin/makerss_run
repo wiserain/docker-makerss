@@ -1,0 +1,6 @@
+#!/bin/sh
+
+su - makerss -c "echo [ $(date "+%F@%T") ] Running makerss.py >> /config/makerss.log"
+su - makerss -c "export PYTHONIOENCODING=utf-8; python /makerss/makerss.py"
+
+exit 0

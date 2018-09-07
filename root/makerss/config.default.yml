@@ -1,0 +1,67 @@
+
+# list of sites you want to enable among templates
+SITE_LIST:
+  - torrentboza
+  # - torrentmap
+  # - downrose
+  # - torrenthaja
+  # - avnori
+  # - torrentao
+  # - tomovie
+
+# templates by soju6jan
+templates:
+  torrentboza:
+    TORRENT_SITE_URL: 'https://torrentboza.com'
+    BO_TABLE_LIST:
+      - 'ani'
+    MAX_PAGE: 1
+    XPATH_LIST_TAG: '//*[@id="fboardlist"]/div[1]/ul/li[%s]/div[2]/a'
+  torrentmap:
+    TORRENT_SITE_URL: 'https://www.torrentmap.com'
+    BO_TABLE_LIST:
+      - 'movie_ero'
+      - 'movie_jd'
+    MAX_PAGE: 1
+    XPATH_LIST_TAG: '//*[@id="fboardlist"]/div/table/tbody/tr[%s]/td[3]/div/a'
+  downrose:
+    TORRENT_SITE_URL: 'https://downrose.com'
+    BO_TABLE_LIST:
+      - 'TOON'
+    MAX_PAGE: 1
+    XPATH_LIST_TAG: '//*[@id="fboardlist"]/div[1]/table/tbody/tr[%s]/td[2]/a'
+  torrenthaja:
+    TORRENT_SITE_URL: 'https://torrenthaja.com'
+    BO_TABLE_LIST:
+      - 'torrent_movie'
+      - 'torrent_video'
+    MAX_PAGE: 1
+    XPATH_LIST_TAG: '//table[@class="table table-hover"]/tbody/tr[%s]/td[2]/div/a'
+    STEP: 2
+    HOW: 'USING_MAGNET_REGAX'
+    MAGNET_REGAX: magnet_link\(\'(?P<magnet>.*?)\'\)
+    MAGNET_MAKE_URL: 'magnet:?xt=urn:btih:%s'
+  avnori:
+    TORRENT_SITE_URL: 'https://avnori.com'
+    BO_TABLE_LIST:
+      - 'torrent_ymav'
+      - 'torrent_nmav'
+    MAX_PAGE: 1
+    XPATH_LIST_TAG: '//div[@class="gallery-boxes row"]/div[%s]/div/div/h6/a'
+    HOW: 'USING_MAGNET_REGAX'
+    MAGNET_REGAX: magnet_link\(\'(?P<magnet>.*?)\'\)
+    MAGNET_MAKE_URL: 'magnet:?xt=urn:btih:%s'
+  torrentao:
+    TORRENT_SITE_URL: 'https://torrentao.com'
+    BO_TABLE_LIST:
+      - 'torrent_movie_eng'
+    MAX_PAGE: 1
+    XPATH_LIST_TAG: '//*[@id="fboardlist"]/div/table/tbody/tr[%s]/td[2]/a'
+    DOWNLOAD_FILE: 'ON'
+  tomovie:
+    TORRENT_SITE_URL: 'https://www.tomovie.net'
+    BO_TABLE_LIST:
+      - 'torrent_movie_eng'
+    MAX_PAGE: 1
+    XPATH_LIST_TAG: '//*[@id="fboardlist"]/ul/li[%s]/a'
+    DOWNLOAD_FILE: 'ON'

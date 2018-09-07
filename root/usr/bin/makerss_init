@@ -1,0 +1,70 @@
+#!/bin/sh
+set +x  # -x: print all / +x: print echo only
+set -e  # terminate immediately in case of error
+
+# Timezone setting
+if [ -n "${TZ}" ]; then
+  echo "[Init] Local timezone to ${TZ}"
+  echo "${TZ}" > /etc/timezone
+  rm /etc/localtime
+  dpkg-reconfigure -f noninteractive tzdata
+fi
+
+if [ ! -d /config ]; then
+	mkdir -p /config
+fi
+
+if [ ! -d /rssxml ]; then
+	mkdir -p /rssxml
+fi
+
+# PUID and PGUID
+cd /config || exit
+
+echo "[Init] Setting permissions on files/folders inside container"
+
+if [ -n "${PUID}" ] && [ -n "${PGID}" ]; then
+  if [ -z "$(getent group "${PGID}")" ]; then
+    addgroup --gid "${PGID}" makerss
+  fi
+
+  makerss_group=$(getent group "${PGID}" | cut -d: -f1)
+
+  if [ -z "$(getent passwd "${PUID}")" ]; then
+    adduser --disabled-password --gecos "" --uid "${PUID}" --gid "${PGID}" makerss
+  fi
+
+  makerss_user=$(getent passwd "${PUID}" | cut -d: -f1)
+
+  chown -R "${makerss_user}":"${makerss_group}" /config /rssxml
+  chmod -R 775 /config /rssxml
+fi
+
+# Check if config.yml exists. If not, copy in
+if [ -f /config/config.yml ]; then
+  echo "[Init] Using existing config.yml"
+else
+  echo "[Init] New config.yml from default"
+  cp /makerss/config.default.yml /config/config.yml
+  if [ -n "$makerss_user" ]; then
+    chown "${makerss_user}":"${makerss_group}" /config/config.yml
+  fi
+fi
+
+if [ ! -z "${CRONTAB}" ]; then
+  echo "[Init] Setting cronjob"
+  echo "${CRONTAB} root /bin/sh /usr/bin/makerss_run" > /etc/cron.d/makerss
+  crontab /etc/cron.d/makerss
+  touch /config/makerss.log
+  cron && tail -f /config/makerss.log &
+fi
+
+echo "[Init] Starting phantomjs"
+if [ -n "$makerss_user" ]; then
+  exec su "${makerss_user}" -m -c \
+  'phantomjs --webdriver=8910'
+else
+  exec phantomjs --webdriver=8910
+fi
+
+ exit 0
