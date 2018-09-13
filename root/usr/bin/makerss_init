@@ -25,20 +25,23 @@ echo "[Init] Setting permissions on files/folders inside container"
 
 if [ -n "${PUID}" ] && [ -n "${PGID}" ]; then
   if [ -z "$(getent group "${PGID}")" ]; then
-    addgroup --gid "${PGID}" makerss
+    addgroup --quiet --gid "${PGID}" makerss
   fi
-
   makerss_group=$(getent group "${PGID}" | cut -d: -f1)
 
   if [ -z "$(getent passwd "${PUID}")" ]; then
-    adduser --disabled-password --gecos "" --uid "${PUID}" --gid "${PGID}" makerss
+    adduser --quiet --disabled-password --gecos "" --uid "${PUID}" --gid "${PGID}" makerss
   fi
-
   makerss_user=$(getent passwd "${PUID}" | cut -d: -f1)
+else
+  addgroup --quiet makerss
+  makerss_group="makerss"
 
-  chown -R "${makerss_user}":"${makerss_group}" /config /rssxml
-  chmod -R 775 /config /rssxml
+  adduser --quiet --disabled-password --gecos "" --ingroup makerss makerss
+  makerss_user="makerss"
 fi
+chown -R "${makerss_user}":"${makerss_group}" /config /rssxml
+chmod -R 775 /config /rssxml
 
 # Check if config.yml exists. If not, copy in
 if [ -f /config/config.yml ]; then
