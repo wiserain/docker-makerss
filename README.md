@@ -13,7 +13,7 @@ docker run -d \
 	-v <path to generated rssxml>:/rssxml \
 	-e PUID=<UID for user> \
 	-e PGID=<GID for user> \
-	-e TZ=<timezone>
+	-e TZ=<timezone> \
 	wiserain/makerss
 ```
 
