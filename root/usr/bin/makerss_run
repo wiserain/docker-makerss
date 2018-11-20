@@ -1,6 +1,5 @@
 #!/bin/sh
 
-su - makerss -c "echo [ $(date "+%F@%T") ] Running makerss.py >> /config/makerss.log"
-su - makerss -c "export PYTHONIOENCODING=utf-8; python /makerss/makerss.py"
+su - makerss -c "export PYTHONIOENCODING=utf-8; cd /config && python makerss_main.py && mv *.xml /rssxml/"
 
 exit 0

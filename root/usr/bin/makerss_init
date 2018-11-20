@@ -2,14 +2,6 @@
 set +x  # -x: print all / +x: print echo only
 set -e  # terminate immediately in case of error
 
-# Timezone setting
-if [ -n "${TZ}" ]; then
-  echo "[Init] Local timezone to ${TZ}"
-  echo "${TZ}" > /etc/timezone
-  rm /etc/localtime
-  dpkg-reconfigure -f noninteractive tzdata
-fi
-
 if [ ! -d /config ]; then
 	mkdir -p /config
 fi
@@ -43,23 +35,24 @@ fi
 chown -R "${makerss_user}":"${makerss_group}" /config /rssxml
 chmod -R 775 /config /rssxml
 
-# Check if config.yml exists. If not, copy in
-if [ -f /config/config.yml ]; then
-  echo "[Init] Using existing config.yml"
+# copy makerss scripts
+if [ -f /config/makerss_main.py ]; then
+  echo "[Init] Using existing makerss_main.py"
 else
-  echo "[Init] New config.yml from default"
-  cp /makerss/config.default.yml /config/config.yml
+  echo "[Init] New makerss_main.py from default"
+  cp /makerss/makerss_main.py /config/makerss_main.py
   if [ -n "$makerss_user" ]; then
-    chown "${makerss_user}":"${makerss_group}" /config/config.yml
+    chown "${makerss_user}":"${makerss_group}" /config/makerss_main.py
   fi
 fi
-
-if [ ! -z "${CRONTAB}" ]; then
-  echo "[Init] Setting cronjob"
-  echo "${CRONTAB} root /bin/sh /usr/bin/makerss_run" > /etc/cron.d/makerss
-  crontab /etc/cron.d/makerss
-  touch /config/makerss.log
-  cron && tail -f /config/makerss.log &
+if [ -f /config/makerss_setting.py ]; then
+  echo "[Init] Using existing makerss_setting.py"
+else
+  echo "[Init] New makerss_setting.py from default"
+  cp /makerss/makerss_setting.py /config/makerss_setting.py
+  if [ -n "$makerss_user" ]; then
+    chown "${makerss_user}":"${makerss_group}" /config/makerss_setting.py
+  fi
 fi
 
 echo "[Init] Starting phantomjs"

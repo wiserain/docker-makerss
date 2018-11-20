@@ -10,12 +10,10 @@ ENV TZ Asia/Seoul
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
         ca-certificates \
-        cron \
         bzip2 \
         libfontconfig \
         python-pip \
         python-urllib3 \
-        python-yaml \
  && pip install --ignore-installed \
         selenium \
  && apt-get clean \
@@ -37,6 +35,8 @@ RUN set -x  \
 
 # add and set permission of scripts
 COPY /root /
+ADD https://raw.githubusercontent.com/soju6jan/soju6jan.github.io/master/makerss/makerss_main.py /makerss
+ADD https://raw.githubusercontent.com/soju6jan/soju6jan.github.io/master/makerss/makerss_setting.py /makerss
 RUN chmod +x /usr/bin/makerss*
 
 VOLUME /config /rssxml
